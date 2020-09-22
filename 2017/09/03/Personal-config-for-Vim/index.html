@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"stxrun.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="descriptionvim configuration with plugin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Personal config for Vim">
+<meta property="og:url" content="http://stxrun.com/2017/09/03/Personal-config-for-Vim/index.html">
+<meta property="og:site_name" content="Stxr">
+<meta property="og:description" content="descriptionvim configuration with plugin">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-09-03T15:43:53.000Z">
+<meta property="article:modified_time" content="2020-09-22T13:12:53.217Z">
+<meta property="article:author" content="浮躁的小螃蟹">
+<meta property="article:tag" content="vim">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://stxrun.com/2017/09/03/Personal-config-for-Vim/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'default'
+  };
+</script>
+
+  <title>Personal config for Vim | Stxr</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Stxr</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://stxrun.com/2017/09/03/Personal-config-for-Vim/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="浮躁的小螃蟹">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Stxr">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Personal config for Vim
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-09-03 23:43:53" itemprop="dateCreated datePublished" datetime="2017-09-03T23:43:53+08:00">2017-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-22 21:12:53" itemprop="dateModified" datetime="2020-09-22T21:12:53+08:00">2020-09-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="description"><a href="#description" class="headerlink" title="description"></a>description</h3><p>vim configuration with plugin</p>
+<a id="more"></a>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot; 让配置变更立即生效</span></span><br><span class="line"><span class="string">&quot;</span>autocmd BufWritePost <span class="variable">$MYVIMRC</span> <span class="built_in">source</span> <span class="variable">$MYVIMRC</span></span><br><span class="line"><span class="built_in">let</span> mapleader=<span class="string">&quot;\&amp;lt;Space&amp;gt;&quot;</span></span><br><span class="line"><span class="string">&quot; 设置快捷键将选中文本块复制至系统剪贴板</span></span><br><span class="line"><span class="string">vnoremap &amp;lt;Leader&amp;gt;y &quot;</span>+y</span><br><span class="line"><span class="string">&quot; 设置快捷键将系统剪贴板内容粘贴至 vim</span></span><br><span class="line"><span class="string">nmap &amp;lt;Leader&amp;gt;p &quot;</span>+p</span><br><span class="line"><span class="string">&quot; 定义快捷键保存当前窗口内容</span></span><br><span class="line"><span class="string">nmap &amp;lt;Leader&amp;gt;w :w&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">&quot;</span> 映射全选+复制 ctrl+a</span><br><span class="line">map &amp;lt;C-A&amp;gt; ggVGY</span><br><span class="line">map! &amp;lt;C-A&amp;gt; &amp;lt;Esc&amp;gt;ggVGY</span><br><span class="line"><span class="string">&quot;搜索逐字符高亮</span></span><br><span class="line"><span class="string">set hlsearch</span></span><br><span class="line"><span class="string">&quot;</span> 去掉输入错误的提示声音</span><br><span class="line"><span class="built_in">set</span> noeb</span><br><span class="line"><span class="string">&quot;自动保存</span></span><br><span class="line"><span class="string">set autowrite</span></span><br><span class="line"><span class="string">&quot;</span>开启行号</span><br><span class="line"><span class="built_in">set</span> nu</span><br><span class="line"><span class="string">&quot; 开启相对行号</span></span><br><span class="line"><span class="string">set rnu</span></span><br><span class="line"><span class="string">&quot;</span> 开启实时搜索功能</span><br><span class="line"><span class="built_in">set</span> incsearch</span><br><span class="line"><span class="string">&quot; 搜索时大小写不敏感</span></span><br><span class="line"><span class="string">set ignorecase</span></span><br><span class="line"><span class="string">&quot;</span> 关闭兼容模式</span><br><span class="line"><span class="built_in">set</span> nocompatible</span><br><span class="line"><span class="string">&quot; vim 自身命令行模式智能补全</span></span><br><span class="line"><span class="string">set wildmenu</span></span><br><span class="line"><span class="string">&quot;</span> 开启语法高亮功能</span><br><span class="line">syntax <span class="built_in">enable</span></span><br><span class="line"><span class="string">&quot; 允许用指定语法高亮配色方案替换默认方案</span></span><br><span class="line"><span class="string">syntax on</span></span><br><span class="line"><span class="string">&quot;</span> 自适应不同语言的智能缩进</span><br><span class="line">filetype indent on</span><br><span class="line"><span class="string">&quot; 将制表符扩展为空格</span></span><br><span class="line"><span class="string">set expandtab</span></span><br><span class="line"><span class="string">&quot;</span> 设置编辑时制表符占用空格数</span><br><span class="line"><span class="built_in">set</span> tabstop=4</span><br><span class="line"><span class="string">&quot; 设置格式化时制表符占用空格数</span></span><br><span class="line"><span class="string">set shiftwidth=4</span></span><br><span class="line"><span class="string">&quot;</span> 让 vim 把连续数量的空格视为一个制表符</span><br><span class="line"><span class="built_in">set</span> softtabstop=4</span><br><span class="line"><span class="string">&quot; 我的状态行显示的内容（包括文件类型和解码）</span></span><br><span class="line"><span class="string">set statusline=%F%m%r%h%w\ [FORMAT=%&#123;&amp;amp;ff&#125;]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %&#123;strftime(\&quot;%d/%m/%y\ -\ %H:%M\&quot;)&#125;</span></span><br><span class="line"><span class="string">set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]</span></span><br><span class="line"><span class="string">&quot;</span> 总是显示状态行</span><br><span class="line"><span class="built_in">set</span> laststatus=2</span><br><span class="line"><span class="string">&quot;自动补全</span></span><br><span class="line"><span class="string">:inoremap ( ()&amp;lt;ESC&amp;gt;i</span></span><br><span class="line"><span class="string">:inoremap ) &amp;lt;c-r&amp;gt;=ClosePair(&#x27;)&#x27;)&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">:inoremap &#123; &#123;&amp;lt;CR&amp;gt;&#125;&amp;lt;ESC&amp;gt;O</span></span><br><span class="line"><span class="string">:inoremap &#125; &amp;lt;c-r&amp;gt;=ClosePair(&#x27;&#125;&#x27;)&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">:inoremap [ []&amp;lt;ESC&amp;gt;i</span></span><br><span class="line"><span class="string">:inoremap ] &amp;lt;c-r&amp;gt;=ClosePair(&#x27;]&#x27;)&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">:inoremap &quot;</span> <span class="string">&quot;&quot;</span>&amp;lt;ESC&amp;gt;i</span><br><span class="line">:inoremap <span class="string">&#x27; &#x27;</span><span class="string">&#x27;&amp;lt;ESC&amp;gt;i</span></span><br><span class="line"><span class="string">function! ClosePair(char)</span></span><br><span class="line"><span class="string">    if getline(&#x27;</span>.<span class="string">&#x27;)[col(&#x27;</span>.<span class="string">&#x27;) - 1] == a:char</span></span><br><span class="line"><span class="string">        return &quot;\&amp;lt;Right&amp;gt;&quot;</span></span><br><span class="line"><span class="string">    else</span></span><br><span class="line"><span class="string">        return a:char</span></span><br><span class="line"><span class="string">    endif</span></span><br><span class="line"><span class="string">endfunction</span></span><br><span class="line"><span class="string">filetype plugin indent on</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;&quot;&quot;新文件标题&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&quot;新建.c,.h,.sh,.java文件，自动插入文件头</span></span><br><span class="line"><span class="string">autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec &quot;:call SetTitle()&quot;</span></span><br><span class="line"><span class="string">&quot;&quot;定义函数SetTitle，自动插入文件头</span></span><br><span class="line"><span class="string">func SetTitle()</span></span><br><span class="line"><span class="string">    &quot;如果文件类型为.sh文件</span></span><br><span class="line"><span class="string">    if &amp;amp;filetype == &#x27;</span>sh<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        call setline(1,&quot;\#########################################################################&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;), &quot;\# File Name: &quot;.expand(&quot;%&quot;))</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+1, &quot;\# Author: stxrun&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+2, &quot;\# mail: stxrun@gmail.com&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+3, &quot;\# Created Time: &quot;.strftime(&quot;%c&quot;))</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+4, &quot;\#########################################################################&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+5, &quot;\#!/bin/bash&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+6, &quot;&quot;)</span></span><br><span class="line"><span class="string">    else</span></span><br><span class="line"><span class="string">        call setline(1, &quot;/*************************************************************************&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;), &quot;    &amp;gt; File Name: &quot;.expand(&quot;%&quot;))</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+1, &quot;    &amp;gt; Author: stxrun&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+2, &quot;    &amp;gt; Mail: stxrun@gmail.com &quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+3, &quot;    &amp;gt; Created Time: &quot;.strftime(&quot;%c&quot;))</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+4, &quot; ************************************************************************/&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+5, &quot;&quot;)</span></span><br><span class="line"><span class="string">    endif</span></span><br><span class="line"><span class="string">    if &amp;amp;filetype == &#x27;</span>cpp<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+6, &quot;#include&amp;lt;iostream&amp;gt;&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+7, &quot;using namespace std;&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+8, &quot;&quot;)</span></span><br><span class="line"><span class="string">    endif</span></span><br><span class="line"><span class="string">    if &amp;amp;filetype == &#x27;</span>c<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+6, &quot;#include&amp;lt;stdio.h&amp;gt;&quot;)</span></span><br><span class="line"><span class="string">        call append(line(&quot;.&quot;)+7, &quot;&quot;)</span></span><br><span class="line"><span class="string">    endif</span></span><br><span class="line"><span class="string">    &quot;新建文件后，自动定位到文件末尾</span></span><br><span class="line"><span class="string">    autocmd BufNewFile * normal G</span></span><br><span class="line"><span class="string">endfunc</span></span><br><span class="line"><span class="string">&quot;C，C++ 按F5编译运行</span></span><br><span class="line"><span class="string">map &amp;lt;F5&amp;gt; :call CompileRunGcc()&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">func! CompileRunGcc()</span></span><br><span class="line"><span class="string">    exec &quot;w&quot;</span></span><br><span class="line"><span class="string">    if &amp;amp;filetype == &#x27;</span>c<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        exec &quot;!g++ % -o %&amp;lt;&quot;</span></span><br><span class="line"><span class="string">        exec &quot;! ./%&amp;lt;&quot;</span></span><br><span class="line"><span class="string">    elseif &amp;amp;filetype == &#x27;</span>cpp<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        exec &quot;!g++ % -o %&amp;lt;&quot;</span></span><br><span class="line"><span class="string">        exec &quot;! ./%&amp;lt;&quot;</span></span><br><span class="line"><span class="string">    elseif &amp;amp;filetype == &#x27;</span>java<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        exec &quot;!javac %&quot;</span></span><br><span class="line"><span class="string">        exec &quot;!java %&amp;lt;&quot;</span></span><br><span class="line"><span class="string">    elseif &amp;amp;filetype == &#x27;</span>sh<span class="string">&#x27;</span></span><br><span class="line"><span class="string">        :!./%</span></span><br><span class="line"><span class="string">    endif</span></span><br><span class="line"><span class="string">endfunc</span></span><br><span class="line"><span class="string">&quot;C,C++的调试</span></span><br><span class="line"><span class="string">map &amp;lt;F8&amp;gt; :call Rungdb()&amp;lt;CR&amp;gt;</span></span><br><span class="line"><span class="string">func! Rungdb()</span></span><br><span class="line"><span class="string">    exec &quot;w&quot;</span></span><br><span class="line"><span class="string">    exec &quot;!g++ % -g -o %&amp;lt;&quot;</span></span><br><span class="line"><span class="string">    exec &quot;!gdb ./%&amp;lt;&quot;</span></span><br><span class="line"><span class="string">endfunc</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><p><a target="_blank" rel="noopener" href="https://github.com/yangyangwithgnu/use_vim_as_ide">https://github.com/yangyangwithgnu/use_vim_as_ide</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/ma6174/archive/2011/12/10/2283393.html">http://www.cnblogs.com/ma6174/archive/2011/12/10/2283393.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vim/" rel="tag"># vim</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/30/gnome-launcher-customization-icon/" rel="prev" title="gnome启动器自定义快捷方式">
+      <i class="fa fa-chevron-left"></i> gnome启动器自定义快捷方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/26/simple-observal-java/" rel="next" title="java接口实现两个类数据传送">
+      java接口实现两个类数据传送 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#description"><span class="nav-number">1.</span> <span class="nav-text">description</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#References"><span class="nav-number">2.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">浮躁的小螃蟹</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">浮躁的小螃蟹</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

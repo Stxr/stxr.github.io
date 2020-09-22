@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"stxrun.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="说明AD9854 是一款频率合成芯片,由于电赛的需要需要写串行驱动。在网上找了很多资料，都是并行的。就算有串行的也是 430 芯片，于是自己阅读技术手册，并在电赛小伙伴的共同帮助下，完成了串口的驱动编写。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AD9854 串行驱动（stm32)">
+<meta property="og:url" content="http://stxrun.com/2017/08/13/AD9854-driver-on-stm32/index.html">
+<meta property="og:site_name" content="Stxr">
+<meta property="og:description" content="说明AD9854 是一款频率合成芯片,由于电赛的需要需要写串行驱动。在网上找了很多资料，都是并行的。就算有串行的也是 430 芯片，于是自己阅读技术手册，并在电赛小伙伴的共同帮助下，完成了串口的驱动编写。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-08-12T16:14:22.000Z">
+<meta property="article:modified_time" content="2020-09-22T13:12:53.217Z">
+<meta property="article:author" content="浮躁的小螃蟹">
+<meta property="article:tag" content="stm32">
+<meta property="article:tag" content="hardware">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://stxrun.com/2017/08/13/AD9854-driver-on-stm32/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'default'
+  };
+</script>
+
+  <title>AD9854 串行驱动（stm32) | Stxr</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Stxr</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://stxrun.com/2017/08/13/AD9854-driver-on-stm32/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="浮躁的小螃蟹">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Stxr">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AD9854 串行驱动（stm32)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-08-13 00:14:22" itemprop="dateCreated datePublished" datetime="2017-08-13T00:14:22+08:00">2017-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-22 21:12:53" itemprop="dateModified" datetime="2020-09-22T21:12:53+08:00">2020-09-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>AD9854 是一款频率合成芯片,由于电赛的需要需要写串行驱动。在网上找了很多资料，都是并行的。就算有串行的也是 430 芯片，于是自己阅读技术手册，并在电赛小伙伴的共同帮助下，完成了串口的驱动编写。</p>
+<a id="more"></a>
+
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li>AD9854 串行口用的是标准的 SPI 协议，用 stm32 自带的就行，也可以用 IO 口自己模拟。官方手册上说速率可达到 10M，但是速率能太低，原因之后会说到。</li>
+<li>AD9854 写入数据时候并不是直接，而是会将数据放入一个缓存区，当更新时钟更新后才将数据锁存到对应的寄存器中。</li>
+<li>AD9854 有一个更新时钟问题，默认是内部时钟。相当于个定时器，当定时器满时，就会锁存数据。如果写入速度太慢的话，当数据还没完全写到缓存去里，内部时钟就更新了，就会造成芯片没法正常工作。至于这个内部时钟是多长时间一次，官方似乎没有说明，官方手册也建议最好换成外部时钟。</li>
+<li>如果换成外部时钟的话，每一个数据就需要手动更新时钟，即拉高一段时间再拉低，好像是 10 个系统周期，这个系统周期指的是外部晶振的周期。</li>
+<li><strong>最重要的来了，外部 update 引脚在写入第一组 48 位控制字的时候不能进行初始化操作！！！否则会造成芯片没法正常工作，正常工作应该至少 300ma，这是个坑，我在这里就卡了几天，后来发现在开单片机之前，把 updata 的引脚的导线拔了再插上就可以正常工作了，才发现这个问题，其中的原因是因为：当内部计数器计数到 0 的时候，会在外部更新时钟引脚（20）产生一个时间长达 8 个时钟长度的高电平，如果在第一组控制字写进去的时候对 20 引脚进行初始化可能会对其电平产生干扰，从而无法使数据正常写入。</strong></li>
+</ul>
+<h3 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h3><p>c 文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ad9854.h&quot;</span></span></span><br><span class="line">SPI_InitTypeDef  SPI_InitStructure;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    AD9854驱动</span></span><br><span class="line"><span class="comment">    Update_clock---PC5</span></span><br><span class="line"><span class="comment">    ~CS---PIN22---PC6</span></span><br><span class="line"><span class="comment">    RESET---PIN17---PC7</span></span><br><span class="line"><span class="comment">    MOSI: PIN19---PB15</span></span><br><span class="line"><span class="comment">    MISO: PIN18---PB14</span></span><br><span class="line"><span class="comment">    SCK:    PIN21---PB13</span></span><br><span class="line"><span class="comment">    SPI2:</span></span><br><span class="line"><span class="comment">    PB 13   14   15</span></span><br><span class="line"><span class="comment">       SCK MISO MOSI</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStructure;</span><br><span class="line">    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC, ENABLE );</span><br><span class="line">    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);</span><br><span class="line">    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7; <span class="comment">//PB5:UPDATE LOCK PB6:CS PB7:RESET</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  <span class="comment">//推挽输出</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOC, &amp;amp;GPIO_InitStructure);</span><br><span class="line">    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15; <span class="comment">//PA5:SCK PA6:MISO PA7:MOSI</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  <span class="comment">//复用推挽输出</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOB, &amp;amp;GPIO_InitStructure);</span><br><span class="line">    GPIO_SetBits(GPIOB,GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);</span><br><span class="line">    GPIO_SetBits(GPIOC,GPIO_Pin_6|GPIO_Pin_7);</span><br><span class="line">    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;  <span class="comment">//设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工</span></span><br><span class="line">    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;       <span class="comment">//设置SPI工作模式:设置为主SPI</span></span><br><span class="line">    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;       <span class="comment">//设置SPI的数据大小:SPI发送接收8位帧结构</span></span><br><span class="line">    SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;     <span class="comment">//串行同步时钟的空闲状态为高电平</span></span><br><span class="line">    SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;    <span class="comment">//串行同步时钟的第二个跳变沿（上升或下降）数据被采样</span></span><br><span class="line">    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;       <span class="comment">//NSS信号由硬件（NSS管脚）还是软件（使用SSI位）管理:内部NSS信号有SSI位控制</span></span><br><span class="line">    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;        <span class="comment">//定义波特率预分频的值:波特率预分频值为256</span></span><br><span class="line">    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;  <span class="comment">//指定数据传输从MSB位还是LSB位开始:数据传输从MSB位开始</span></span><br><span class="line">    SPI_InitStructure.SPI_CRCPolynomial = <span class="number">7</span>;    <span class="comment">//CRC值计算的多项式</span></span><br><span class="line">    SPI_Init(SPI2, &amp;amp;SPI_InitStructure);  <span class="comment">//根据SPI_InitStruct中指定的参数初始化外设SPIx寄存器</span></span><br><span class="line">    SPI_Cmd(SPI2, ENABLE); <span class="comment">//使能SPI外设</span></span><br><span class="line">    <span class="comment">//master_reset();</span></span><br><span class="line">    SPI2_ReadWriteByte(<span class="number">0xff</span>);<span class="comment">//启动传输</span></span><br><span class="line">    SPI2_SetSpeed(SPI_BaudRatePrescaler_16);<span class="comment">//4.5M传输速度</span></span><br><span class="line">    AD9864_Reset();</span><br><span class="line">    <span class="comment">//master_reset();</span></span><br><span class="line">    AD9854_Ctr(<span class="number">0x104a0021</span>);<span class="comment">//控制指令</span></span><br><span class="line">    <span class="comment">//一定要写在控制指令后面</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; <span class="comment">//PB5:UPDATE</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  <span class="comment">//推挽输出</span></span><br><span class="line">    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;</span><br><span class="line">    GPIO_Init(GPIOC, &amp;amp;GPIO_InitStructure);</span><br><span class="line">    <span class="comment">//AD9854_Ctr(0x10040020);//0x104a0040 0x1040031</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//SPI 速度设置函数</span></span><br><span class="line"><span class="comment">//SpeedSet:</span></span><br><span class="line"><span class="comment">//SPI_BaudRatePrescaler_2   2分频   (SPI 36M@sys 72M)</span></span><br><span class="line"><span class="comment">//SPI_BaudRatePrescaler_8   8分频   (SPI 9M@sys 72M)</span></span><br><span class="line"><span class="comment">//SPI_BaudRatePrescaler_16  16分频  (SPI 4.5M@sys 72M)</span></span><br><span class="line"><span class="comment">//SPI_BaudRatePrescaler_256 256分频 (SPI 281.25K@sys 72M)</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SPI2_SetSpeed</span><span class="params">(u8 SpeedSet)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    SPI_InitStructure.SPI_BaudRatePrescaler = SpeedSet;</span><br><span class="line">  SPI_Init(SPI2, &amp;amp;SPI_InitStructure);</span><br><span class="line">    SPI_Cmd(SPI2,ENABLE);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//SPIx 读写一个字节</span></span><br><span class="line">    <span class="comment">//TxData:要写入的字节</span></span><br><span class="line"><span class="comment">//返回值:读取到的字节</span></span><br><span class="line"><span class="function">u8 <span class="title">SPI2_ReadWriteByte</span><span class="params">(u8 TxData)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    u8 retry=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET) <span class="comment">//检查指定的SPI标志位设置与否:发送缓存空标志位</span></span><br><span class="line">    &#123;</span><br><span class="line">        retry++;</span><br><span class="line">        <span class="keyword">if</span>(retry&amp;gt;<span class="number">200</span>)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    SPI_I2S_SendData(SPI2, TxData); <span class="comment">//通过外设SPIx发送一个数据</span></span><br><span class="line">    retry=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_RXNE) == RESET)<span class="comment">//检查指定的SPI标志位设置与否:接受缓存非空标志位</span></span><br><span class="line">        &#123;</span><br><span class="line">        retry++;</span><br><span class="line">        <span class="keyword">if</span>(retry&amp;gt;<span class="number">200</span>)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> SPI_I2S_ReceiveData(SPI2); <span class="comment">//返回通过SPIx最近接收的数据</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">        FTW = (Desired Output Frequency × 2^N)/SYSCLK N=48</span></span><br><span class="line"><span class="comment">        入口参数：要求的频率hz</span></span><br><span class="line"><span class="comment">        写入控制字</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Write_FTW</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> frequency)</span></span>&#123;</span><br><span class="line">    u8 fwt[<span class="number">6</span>]=&#123;<span class="number">0</span>&#125;; <span class="comment">//fwt的缓存，一共有48bit，6位保存，1位保存8bit</span></span><br><span class="line">  u32 freq=<span class="number">0</span>; <span class="comment">//计算乘积</span></span><br><span class="line">    u8 freq_buff[<span class="number">4</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&amp;lt;<span class="number">4</span>;i++)&#123; <span class="comment">//将frequency拆分进freq里</span></span><br><span class="line">        freq_buff[i]=frequency&amp;gt;&amp;gt;(<span class="number">8</span>*i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&amp;lt;<span class="number">6</span>;i++)&#123; <span class="comment">//计算的到频率控制字并拆分到freq中</span></span><br><span class="line">        <span class="keyword">if</span>(i&amp;lt;<span class="number">4</span>)&#123;</span><br><span class="line">            freq += AD9854_FWT_TEMP * freq_buff[i];</span><br><span class="line">            fwt[i] = freq;</span><br><span class="line">            freq &amp;gt;&amp;gt;= <span class="number">8</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            fwt[i] = freq;</span><br><span class="line">            freq&amp;gt;&amp;gt;=<span class="number">8</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    AD9854_CS = <span class="number">0</span>;</span><br><span class="line">    SPI2_ReadWriteByte(AD9854_FRE1); <span class="comment">//频率1的控制字地址</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">5</span>;i&amp;gt;=<span class="number">0</span>;i--)&#123; <span class="comment">//发送数据，先发高位</span></span><br><span class="line">        SPI2_ReadWriteByte(fwt[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    AD9854_CS=<span class="number">1</span>;</span><br><span class="line">    AD9854_Update();<span class="comment">//更新</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    设置正弦波</span></span><br><span class="line"><span class="comment">    frequency:频率</span></span><br><span class="line"><span class="comment">    shap:幅度 0-4096</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_SetSine</span><span class="params">(u8 f,u16 shape)</span></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> frequency=f*<span class="number">1000000</span>;</span><br><span class="line">    <span class="comment">//shape=shape*AM;</span></span><br><span class="line">    AD9854_Write_FTW(frequency); <span class="comment">//设置频率控制字</span></span><br><span class="line">    AD9854_CS=<span class="number">0</span>;</span><br><span class="line">    SPI2_ReadWriteByte(AD9854_I_MUL); <span class="comment">//如果最高位是1则读，最高位是0则写 默认是0</span></span><br><span class="line">    SPI2_ReadWriteByte(shape&amp;gt;&amp;gt;<span class="number">8</span>); <span class="comment">//先传高位</span></span><br><span class="line">    SPI2_ReadWriteByte(shape&amp;amp;<span class="number">0xff</span>);</span><br><span class="line">    AD9854_CS=<span class="number">1</span>;</span><br><span class="line">    AD9854_Update();<span class="comment">//更新</span></span><br><span class="line">    AD9854_CS=<span class="number">0</span>;</span><br><span class="line">    SPI2_ReadWriteByte(AD9854_Q_MUL);</span><br><span class="line">    SPI2_ReadWriteByte(shape&amp;gt;&amp;gt;<span class="number">8</span>);</span><br><span class="line">    SPI2_ReadWriteByte(shape&amp;amp;<span class="number">0xff</span>);</span><br><span class="line">    AD9854_CS=<span class="number">1</span>;</span><br><span class="line">    AD9854_Update();<span class="comment">//更新</span></span><br><span class="line">    <span class="comment">//发送阶梯电压</span></span><br><span class="line">    JTB2_Control(f*<span class="number">80</span>);<span class="comment">//控制DAC</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    复位</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9864_Reset</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    AD9854_RESET=<span class="number">1</span>;</span><br><span class="line">    delay_ms(<span class="number">1</span>);</span><br><span class="line">    AD9854_RESET=<span class="number">0</span>;</span><br><span class="line">    delay_ms(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    控制指令</span></span><br><span class="line"><span class="comment">    control 16位</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Ctr</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> control)</span></span>&#123;</span><br><span class="line">    AD9854_CS=<span class="number">0</span>;</span><br><span class="line">    SPI2_ReadWriteByte(AD9854_CTR_REG); <span class="comment">//传地址</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">3</span>;i&amp;gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">        SPI2_ReadWriteByte(control&amp;gt;&amp;gt;(i*<span class="number">8</span>)); <span class="comment">//先传高位</span></span><br><span class="line">    &#125;</span><br><span class="line">    AD9854_CS=<span class="number">1</span>;</span><br><span class="line">    AD9854_Update();<span class="comment">//更新</span></span><br><span class="line">    delay_ms(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  更新</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Update</span><span class="params">()</span></span>&#123;</span><br><span class="line">    AD9854_UPDATE_LOCK =<span class="number">1</span>;</span><br><span class="line">    delay_ms(<span class="number">1</span>);</span><br><span class="line">    AD9854_UPDATE_LOCK = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//void master_reset()&#123;</span></span><br><span class="line"><span class="comment">//  AD9854_MASTER_RESET=1;</span></span><br><span class="line"><span class="comment">//  delay_ms(1);</span></span><br><span class="line"><span class="comment">//  AD9854_MASTER_RESET=0;</span></span><br><span class="line"><span class="comment">//  delay_ms(1);</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>h 文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _AD9854_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _AD9854_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;sys.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;delay.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;libincludes.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AD9854_UPDATE_LOCK PCout(5)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AD9854_CS PCout(6)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AD9854_RESET PCout(7)</span></span><br><span class="line"><span class="comment">//#define AD9854_MASTER_RESET PAout(4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SPI_MISO PAout(6)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SPI_MOSI PAout(7)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SPI_SCK  PAout(5)</span></span><br><span class="line"> <span class="comment">//serial address write</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_PHA1       0x00       <span class="comment">// 2 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_PHA2       0x01       <span class="comment">// 2 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_FRE1       0x02       <span class="comment">// 6 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_FRE2       0x03      <span class="comment">// 6 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_DELTA      0x04        <span class="comment">// 6 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_UPDATA     0x05        <span class="comment">// 4 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_RAMP_CLK   0x06        <span class="comment">// 3 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_CTR_REG    0x07       <span class="comment">// 4 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_I_MUL      0x08        <span class="comment">// 2 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_Q_MUL      0x09        <span class="comment">// 2 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_SHAPED     0x0A       <span class="comment">// 1 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      AD9854_Q_DAC      0x0B        <span class="comment">// 2 Bytes</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AD9854_FWT_TEMP 1407375  <span class="comment">// 2^48/20M 用来计算fwt 1407374.883</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AM 15</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Init</span><span class="params">(<span class="keyword">void</span>)</span></span>;          <span class="comment">//初始化SPI口</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SPI2_SetSpeed</span><span class="params">(u8 SpeedSet)</span></span>; <span class="comment">//设置SPI速度</span></span><br><span class="line"><span class="function">u8 <span class="title">SPI2_ReadWriteByte</span><span class="params">(u8 TxData)</span></span>;<span class="comment">//SPI总线读写一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Update</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_Ctr</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> control)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9864_Reset</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AD9854_SetSine</span><span class="params">(u8 f,u16 shape)</span></span>; <span class="comment">//设置正弦波幅度和频率</span></span><br><span class="line"><span class="comment">//void master_reset(void);</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/stm32/" rel="tag"># stm32</a>
+              <a href="/tags/hardware/" rel="tag"># hardware</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2017/08/30/gnome-launcher-customization-icon/" rel="next" title="gnome启动器自定义快捷方式">
+      gnome启动器自定义快捷方式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">2.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">3.</span> <span class="nav-text">程序</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">浮躁的小螃蟹</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">浮躁的小螃蟹</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
